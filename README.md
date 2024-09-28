@@ -1,6 +1,6 @@
 # TinyBuild - A Small Build System Written in C++
 
-<i>This project was made for fun as a side project, it is recommended not to rely on this software updating in the future, however, because it is so small, it is unlikely to have major security flaws.</i>
+<i>This project was made for fun as a side project, it is recommended not to rely on this software updating in the future. Also I am an ameteur, so expect ametuer level code.</i>
 
 TinyBuild is a build system where all configuration is done in an hpp file, compiled into the tbuild binary.
 
