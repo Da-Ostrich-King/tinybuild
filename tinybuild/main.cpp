@@ -74,9 +74,25 @@ int main (int argc, char* argv[]) {
 
     for (BuildConfig config : configs) {
         if (config.name == args.config) {
+            if (!std::filesystem::exists(build / config.name)) {
+                std::cout << "Configuration specific build directory not found, creating " << build / config.name << "...\n";
+                std::filesystem::create_directory(build / config.name);
+                std::cout << "Created " << build / config.name << ".\n";
+            }
+
             if (args.compile) {
                 for (Binarys binary : config.binarys) {
-                    std::string command = std::format("{}", config.CC);
+                    std::string srcFiles;
+                    for (auto dir : binary.srcdirs) {
+                        std::filesystem::path srcdir = dir;
+                        if (std::filesystem::exists(srcdir)) {
+                            srcFiles += srcdir; srcFiles += "/*."; srcFiles += EXTENSION; srcdir += " ";
+                        }
+                    }
+                    std::string command = std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o") + std::string(build/config.name/binary.bin));
+                    std::cout << "\nBuilding with configuration " << config.name << ":\n";
+                    std::cout << "Command: " << command << "\n";
+                    system(command.c_str());
                 }
             }
         }

@@ -4,7 +4,6 @@
 struct Binarys {
     const char* bin;
     std::vector<const char*> srcdirs;
-    std::vector<const char*> srcfiles;
     const char* CCFLAGS;
 };
 
