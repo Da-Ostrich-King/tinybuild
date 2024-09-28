@@ -4,7 +4,7 @@
 
 TinyBuild is a build system where all configuration is done in an hpp file, compiled into the tbuild binary.
 
-A default config is provided in the repository under "tinybuildConfig.hpp", from now on refered to as TBConfig.
+A default config is provided in the repository under "tinybuild/tinybuildConfig.hpp", from now on refered to as TBConfig.
 
 To use the TinyBuild build system, place the tinybuild folder from this repository at the root of your project, and put the TBConfig in the root as well. <br> <br>
 
