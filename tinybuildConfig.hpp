@@ -2,7 +2,7 @@
 
 #include "./tinybuild/defines.hpp"
 
-#define BUILDDIR "./build"
+#define BUILDDIR "./"
 #define EXTENSION "cpp"
 
 // build config
@@ -12,9 +12,9 @@ const BuildConfig configs[] = {
         .CC="g++",
         .binarys={
             {// binary 1
-                .bin="bin",
-                .srcdirs={"src"}, // every file in the srcdirs that matches "*.<EXTENSTION>" will be compiled together
-                .CCFLAGS="--std=c++20 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11"
+                .bin="tbuild",
+                .srcdirs={"tinybuild"}, // every file in the srcdirs that matches "*.<EXTENSTION>" will be compiled together
+                .CCFLAGS=""
             }
         }
     } // add more configurations here    

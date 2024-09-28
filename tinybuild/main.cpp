@@ -1,3 +1,7 @@
+// IF I WAS STUPID AND FORGOT TO PUT A LICENSE, REFER TO https://www.gnu.org/licenses/gpl-3.0.en.html#license-text FOR LICENSE INFORMATION
+
+
+
 #include "../tinybuildConfig.hpp"
 #include "defines.hpp"
 
