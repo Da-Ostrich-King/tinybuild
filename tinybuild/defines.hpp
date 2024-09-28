@@ -12,4 +12,5 @@ struct BuildConfig {
     const char* name;
     const char* CC;
     std::vector<Binarys> binarys;
+    const bool MAKEBUILDDIR = true;
 };

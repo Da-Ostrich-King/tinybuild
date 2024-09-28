@@ -14,9 +14,10 @@ const BuildConfig configs[] = {
             {// binary 1
                 .bin="tbuild",
                 .srcdirs={"tinybuild"}, // every file in the srcdirs that matches "*.<EXTENSTION>" will be compiled together
-                .CCFLAGS=""
+                .CCFLAGS="-std=c++20"
             }
-        }
+        },
+        .MAKEBUILDDIR=false
     } // add more configurations here    
 };
 

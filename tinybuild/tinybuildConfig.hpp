@@ -22,7 +22,8 @@ const BuildConfig configs[] = {
                 .srcdirs={"src"}, // every file in the srcdirs that matches "*.<EXTENSTION>" will be compiled together
                 .CCFLAGS=""
             }
-        }
+        },
+        .MAKEBUILDDIR=true
     } // add more configurations here    
 };
 

@@ -42,6 +42,7 @@ struct Args {
 int parseArgs(int argc, char* argv[], Args& args) {
     if (argc == 1) {
         std::cout << helpText;
+        return 0;
     }
     // List of defines supplied at command line
     for (int i = 1; i < argc; ++i) {
@@ -75,34 +76,48 @@ int main (int argc, char* argv[]) {
     Args args;
     int parseArgsReturnCode = parseArgs(argc, argv, args);
 
+    if (parseArgsReturnCode == 1) {
+        return 1;
+    }
+
     if (args.clean) {
-        std::cout << "Deleting " << BUILDDIR << "/" << args.config << ". Are you sure? [y/N] ";
-        std::string answer;
-        std::cin >> answer;
-        if (answer == "y") {
-            std::cout << "Deleting...\n";
-            if (std::filesystem::exists(BUILDDIR + args.config)) {
-                std::filesystem::remove_all(std::filesystem::path(BUILDDIR + args.config));
+        if (std::string(BUILDDIR) == ".") {
+            std::cout << "Deleting " << BUILDDIR << "/" << args.config << ". Are you sure? [y/N] ";
+            std::string answer;
+            std::cin >> answer;
+            if (answer == "y") {
+                std::cout << "Deleting...\n";
+                if (std::filesystem::exists(BUILDDIR + args.config)) {
+                    std::filesystem::remove_all(std::filesystem::path(BUILDDIR + args.config));
+                }
+                std::cout << "Deleted.\n";
+            } else {
+                std::cout << "Not deleting.\n";
+                return 1;
             }
-            std::cout << "Deleted.\n";
         } else {
-            std::cout << "Not deleting.\n";
+            std::cout << "Cannot clean build directory at root of project.\n";
             return 1;
         }
     }
 
     if (args.nuke) {
-        std::cout << "Deleting " << BUILDDIR << ". Are you sure? [y/N] ";
-        std::string answer;
-        std::cin >> answer;
-        if (answer == "y") {
-            std::cout << "Deleting...\n";
-            if (std::filesystem::exists(BUILDDIR)) {
-                std::filesystem::remove_all(BUILDDIR);
+        if (std::string(BUILDDIR) == ".") {
+            std::cout << "Deleting " << BUILDDIR << ". Are you sure? [y/N] ";
+            std::string answer;
+            std::cin >> answer;
+            if (answer == "y") {
+                std::cout << "Deleting...\n";
+                if (std::filesystem::exists(BUILDDIR)) {
+                    std::filesystem::remove_all(BUILDDIR);
+                }
+                std::cout << "Deleted.\n";
+            } else {
+                std::cout << "Not deleting.\n";
+                return 1;
             }
-            std::cout << "Deleted.\n";
         } else {
-            std::cout << "Not deleting.\n";
+            std::cout << "Cannot clean build directory at root of project.";
             return 1;
         }
     }
@@ -116,10 +131,14 @@ int main (int argc, char* argv[]) {
 
     for (BuildConfig config : configs) {
         if (config.name == args.config) {
-            if (!std::filesystem::exists(build / config.name)) {
-                std::cout << "Configuration specific build directory not found, creating " << build / config.name << "...\n";
-                std::filesystem::create_directory(build / config.name);
-                std::cout << "Created " << build / config.name << ".\n";
+            if (config.MAKEBUILDDIR) {
+                if (!std::filesystem::exists(build / config.name)) {
+                    std::cout << "Configuration specified build directory not found, creating " << build / config.name << "...\n";
+                    std::filesystem::create_directory(build / config.name);
+                    std::cout << "Created " << build / config.name << ".\n";
+                }
+            } else {
+                std::cout << "MAKEBUILDDIR is set to false, placing build files in BUILDDIR directly.\n";
             }
 
             if (args.compile) {
@@ -131,7 +150,9 @@ int main (int argc, char* argv[]) {
                             srcFiles += srcdir; srcFiles += "/*."; srcFiles += EXTENSION; srcdir += " ";
                         }
                     }
-                    std::string command = std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o") + std::string(build/config.name/binary.bin));
+                    std::string command = (config.MAKEBUILDDIR) ? 
+                        std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o") + std::string(build/config.name/binary.bin)) :
+                        std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o") + std::string(build/binary.bin));
                     std::cout << "\nBuilding with configuration " << config.name << ":\n";
                     std::cout << "Command: " << command << "\n";
                     system(command.c_str());
