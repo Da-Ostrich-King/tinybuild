@@ -31,6 +31,8 @@ struct Args {
     bool compile = false;
     std::vector<const char*> defines;
     std::string config = "default";
+    bool clean = false;
+    bool nuke = false;
 };
 
 int parseArgs(int argc, char* argv[], Args& args) {
@@ -50,6 +52,10 @@ int parseArgs(int argc, char* argv[], Args& args) {
             continue;
         } else if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help") {
             std::cout << helpText;
+        } else if (std::string(argv[i]) == "--clean") {
+            args.clean = true;
+        } else if (std::string(argv[i]) == "--nuke") {
+            args.nuke = true;
         } else { // if a command is unkown, recommend reading help text
             std::cout << "Unkown command \"" << argv[i] << "\"\n";
             std::cout << "Use -h | --help for help text";
@@ -64,6 +70,38 @@ int main (int argc, char* argv[]) {
     
     Args args;
     int parseArgsReturnCode = parseArgs(argc, argv, args);
+
+    if (args.clean) {
+        std::cout << "Deleting " << BUILDDIR << "/" << args.config << ". Are you sure? [y/N] ";
+        std::string answer;
+        std::cin >> answer;
+        if (answer == "y") {
+            std::cout << "Deleting...\n";
+            if (std::filesystem::exists(BUILDDIR + args.config)) {
+                std::filesystem::remove_all(std::filesystem::path(BUILDDIR + args.config));
+            }
+            std::cout << "Deleted.\n";
+        } else {
+            std::cout << "Not deleting.\n";
+            return 1;
+        }
+    }
+
+    if (args.nuke) {
+        std::cout << "Deleting " << BUILDDIR << ". Are you sure? [y/N] ";
+        std::string answer;
+        std::cin >> answer;
+        if (answer == "y") {
+            std::cout << "Deleting...\n";
+            if (std::filesystem::exists(BUILDDIR)) {
+                std::filesystem::remove_all(BUILDDIR);
+            }
+            std::cout << "Deleted.\n";
+        } else {
+            std::cout << "Not deleting.\n";
+            return 1;
+        }
+    }
 
     std::filesystem::path build = BUILDDIR;
     if (!std::filesystem::exists(build)) {
