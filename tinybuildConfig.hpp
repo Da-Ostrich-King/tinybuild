@@ -1,4 +1,6 @@
 // All paths are relative tinybuildConfig.hpp
+#pragma once
+
 
 #include "./tinybuild/defines.hpp"
 
