@@ -147,8 +147,20 @@ int main (int argc, char* argv[]) {
                     for (auto dir : binary.srcdirs) {
                         std::filesystem::path srcdir = dir;
                         if (std::filesystem::exists(srcdir)) {
-                            srcFiles += srcdir.generic_string(); srcFiles += "/*."; srcFiles += EXTENSION; srcdir += " ";
+                            for (const auto& file : std::filesystem::directory_iterator(srcdir)) { // get every file in src dir
+                                bool matches = true;
+                                if (file.path().generic_string().substr(file.path().generic_string().find_last_of(".") + 1) == std::string(EXTENSION)) {
+                                    srcFiles += std::string(file.path().generic_string()); srcFiles += " ";
+                                }
+                            }
                         }
+                    }
+                    if (std::filesystem::exists((config.MAKEBUILDDIR) ? std::string((build/config.name/binary.bin).generic_string()) :
+                                                                        std::string((build/binary.bin).generic_string()))) { //check if binary already exists, if it does remove it
+
+                                                                        
+                        std::filesystem::remove((config.MAKEBUILDDIR) ? std::string((build/config.name/binary.bin).generic_string()) :
+                                                                        std::string((build/binary.bin).generic_string()));
                     }
                     std::string command = (config.MAKEBUILDDIR) ? 
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/config.name/binary.bin).generic_string())) :
