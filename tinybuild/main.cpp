@@ -155,13 +155,7 @@ int main (int argc, char* argv[]) {
                             }
                         }
                     }
-                    if (std::filesystem::exists((config.MAKEBUILDDIR) ? std::string((build/config.name/binary.bin).generic_string()) :
-                                                                        std::string((build/binary.bin).generic_string()))) { //check if binary already exists, if it does remove it
 
-                                                                        
-                        std::filesystem::remove((config.MAKEBUILDDIR) ? std::string((build/config.name/binary.bin).generic_string()) :
-                                                                        std::string((build/binary.bin).generic_string()));
-                    }
                     std::string command = (config.MAKEBUILDDIR) ? 
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/config.name/binary.bin).generic_string())) :
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/binary.bin).generic_string()));
