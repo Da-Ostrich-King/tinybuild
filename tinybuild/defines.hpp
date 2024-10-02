@@ -5,6 +5,7 @@ struct Binarys {
     const char* bin;
     std::vector<const char*> srcdirs;
     const char* CCFLAGS;
+    std::vector<const char*> explicitSrcFiles;
 };
 
 

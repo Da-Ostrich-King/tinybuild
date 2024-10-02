@@ -155,6 +155,9 @@ int main (int argc, char* argv[]) {
                             }
                         }
                     }
+                    for (auto explicitFile : binary.explicitSrcFiles) {
+                        srcFiles += std::string (explicitFile); srcFiles += " ";
+                    }
 
                     std::string command = (config.MAKEBUILDDIR) ? 
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/config.name/binary.bin).generic_string())) :
