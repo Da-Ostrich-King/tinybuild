@@ -14,17 +14,15 @@
 
 #ifdef _WIN32
 #include <windows.h>
-std::string getExecutablePath()
-{
-  char result[ MAX_PATH ];
-  return std::string( result, GetModuleFileName( NULL, result, MAX_PATH ) );
+std::string getExecutablePath() {
+  wchar_t result[ MAX_PATH ];
+  return std::string( (char *) result, GetModuleFileName( NULL, result, MAX_PATH ) );
 }
 #else
 #include <limits.h>
 #include <unistd.h>
 
-std::string getExecutablePath()
-{
+std::string getExecutablePath() {
   char result[ PATH_MAX ];
   ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
   return std::string( result, (count > 0) ? count : 0 );
