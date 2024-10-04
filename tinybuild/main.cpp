@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <system_error>
 #include <vector>
 #include <filesystem>
 #include <format>
@@ -37,6 +38,7 @@ struct Args {
     std::string config = "default";
     bool clean = false;
     bool nuke = false;
+    bool rebuild = false;
 };
 
 int parseArgs(int argc, char* argv[], Args& args) {
@@ -61,6 +63,8 @@ int parseArgs(int argc, char* argv[], Args& args) {
             args.clean = true;
         } else if (std::string(argv[i]) == "--nuke") {
             args.nuke = true;
+        } else if (std::string(argv[i]) == "--rebuild") {
+            args.rebuild = true;
         } else { // if a command is unkown, recommend reading help text
             std::cout << "Unkown command \"" << argv[i] << "\"\n";
             std::cout << "Use -h | --help for help text";
@@ -76,9 +80,35 @@ int main (int argc, char* argv[]) {
     Args args;
     int parseArgsReturnCode = parseArgs(argc, argv, args);
 
-    if (parseArgsReturnCode == 1) {
-        return 1;
+    if (std::filesystem::exists(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"))) {
+        std::filesystem::remove(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"));
     }
+
+    if (parseArgsReturnCode != 0) {
+        return parseArgsReturnCode;
+    }
+
+    if (args.rebuild) {
+        std::error_code renameErrorCode;
+        std::filesystem::rename(std::filesystem::path(std::filesystem::current_path() / "tbuild"), 
+            std::filesystem::path(std::filesystem::current_path() / "tbuild.old"), renameErrorCode);
+        if (renameErrorCode) {
+            std::cout << "error\n";
+        }
+
+
+        std::string tbuildSource;
+        for (const auto& file : std::filesystem::directory_iterator(std::filesystem::path("tinybuild"))) { // get every file in src dir
+            if (file.path().generic_string().substr(file.path().generic_string().find_last_of(".") + 1) == std::string("cpp")) {
+                tbuildSource += std::string(file.path().generic_string()); tbuildSource += " ";
+            }
+        }
+        std::string rebuildCommand = std::format("g++ {} -o tbuild --std=c++20", tbuildSource);
+        std::cout << "Rebuilding tbuild with \"" << rebuildCommand << "\"\n";
+        system(rebuildCommand.c_str());
+        return 0;
+    }
+
 
     if (args.clean) {
         if (std::string(BUILDDIR) == ".") {
@@ -156,7 +186,6 @@ int main (int argc, char* argv[]) {
                         std::filesystem::path srcdir = dir;
                         if (std::filesystem::exists(srcdir)) {
                             for (const auto& file : std::filesystem::directory_iterator(srcdir)) { // get every file in src dir
-                                bool matches = true;
                                 if (file.path().generic_string().substr(file.path().generic_string().find_last_of(".") + 1) == std::string(EXTENSION)) {
                                     srcFiles += std::string(file.path().generic_string()); srcFiles += " ";
                                 }

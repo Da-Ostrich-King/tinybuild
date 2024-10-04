@@ -5,7 +5,7 @@
 #include "defines.hpp"
 
 
-#define BUILDDIR "./"
+#define BUILDDIR "./build"
 #define EXTENSION "cpp"
 
 
@@ -16,12 +16,12 @@ const BuildConfig configs[] = {
         .CC="g++",
         .binarys={
             {// binary 1
-                .bin="tbuild",
-                .srcdirs={"tinybuild"}, // every file in the srcdirs that matches "*.<EXTENSTION>" will be compiled together
-                .CCFLAGS="-std=c++20"
+                .bin="bin",
+                .srcdirs={"src"}, // every file in the srcdirs that matches "*.<EXTENSTION>" will be compiled together
+                .CCFLAGS=""
             }
         },
-        .MAKEBUILDDIR=false,
+        .MAKEBUILDDIR=true,
         .initFunction=nullptr
     } // add more configurations here    
 };
