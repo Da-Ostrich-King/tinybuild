@@ -14,7 +14,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-std::string getexepath()
+std::string getExecutablePath()
 {
   char result[ MAX_PATH ];
   return std::string( result, GetModuleFileName( NULL, result, MAX_PATH ) );
@@ -23,7 +23,7 @@ std::string getexepath()
 #include <limits.h>
 #include <unistd.h>
 
-std::string getexepath()
+std::string getExecutablePath()
 {
   char result[ PATH_MAX ];
   ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
@@ -103,7 +103,7 @@ int main (int argc, char* argv[]) {
     
     Args args;
     int parseArgsReturnCode = parseArgs(argc, argv, args);
-    std::string exepath = getexepath();
+    std::string exepath = getExecutablePath();
 
     if (exepath.substr(exepath.find_last_of("/") + 1) != std::string("tbuild.old")) {
         if (std::filesystem::exists(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"))) {
