@@ -32,7 +32,7 @@ To build tinybuild with its current configuration, run
 ```
     g++ tinybuild/main.cpp -o tbuild --std=c++20
 ```
-<i>If you are doing advanced configurations with init functions add any other configuration cpp files you have</i>
+<i>You only have to do this the first time you build tbuild, each subsequent time you can run ```./tbuild --rebuild```, tbuild will rename the previous binary to "tbuild.old", it will delete this file whenever tbuild is run again</i>
 And then to build your project run
 ```./tbuild -c```. If you want to add defines on the command line add the ```-d | --define "<definition>"``` argument to ```./tbuild```. This is passed directly to CC on command line.<br>
 <i>Currently I was stupid and ```-d | --define``` does absolutely nothing</i>
@@ -41,7 +41,7 @@ If you want to select a configuration other than "default", add ```--config``` t
 
 
 # Other
-The TBConfig in the root of the repository is the configuration for building tbuild with itself, the default config is in the ```tinybuild/``` directory as ```tinybuild/tinybuildConfig.hpp``` <br>
+The default config is in the ```tinybuild/``` directory as ```tinybuild/tinybuildConfig.hpp``` <br>
 You can also add per-config initFunctions, as a function pointer, function prototype is placed in the tbuild config like this.<br>
 ```
     void myFunFunction ();
