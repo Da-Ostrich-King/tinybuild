@@ -13,10 +13,19 @@
 #include <format>
 
 #ifdef _WIN32
+#define EXENAME "tbuild.exe"
+#define OLDEXENAME "tbuild.old.exe"
+#else
+#define EXENAME "tbuild"
+#define OLDEXENAME "tbuild.old"
+#endif
+
+#ifdef _WIN32
+#define WINDOWS_LEAN_AND_MEAN
 #include <windows.h>
 std::string getExecutablePath() {
-  wchar_t result[ MAX_PATH ];
-  return std::string( (char *) result, GetModuleFileName( NULL, result, MAX_PATH ) );
+    char result[ MAX_PATH ];
+    return std::string( result, GetModuleFileName( NULL, result, MAX_PATH ) );
 }
 #else
 #include <limits.h>
@@ -103,9 +112,9 @@ int main (int argc, char* argv[]) {
     int parseArgsReturnCode = parseArgs(argc, argv, args);
     std::string exepath = getExecutablePath();
 
-    if (exepath.substr(exepath.find_last_of("/") + 1) != std::string("tbuild.old")) {
-        if (std::filesystem::exists(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"))) {
-            std::filesystem::remove(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"));
+    if (exepath.substr(exepath.find_last_of("/") + 1) != std::string(OLDEXENAME)) {
+        if (std::filesystem::exists(std::filesystem::path(std::filesystem::current_path() / OLDEXENAME))) {
+            std::filesystem::remove(std::filesystem::path(std::filesystem::current_path() / OLDEXENAME));
         }
     }
 
@@ -115,16 +124,17 @@ int main (int argc, char* argv[]) {
     }
 
 
-    if (exepath.substr(exepath.find_last_of("/") + 1) == std::string("tbuild.old")) {
-        std::filesystem::rename(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"), std::filesystem::path(std::filesystem::current_path() / "tbuild"));
+    if (exepath.substr(exepath.find_last_of("/") + 1) == std::string(OLDEXENAME)) {
+        std::filesystem::rename(std::filesystem::current_path() / OLDEXENAME, std::filesystem::current_path() / EXENAME);
     }
 
     if (args.rebuild) {
         std::error_code renameErrorCode;
-        std::filesystem::rename(std::filesystem::path(std::filesystem::current_path() / "tbuild"), 
-            std::filesystem::path(std::filesystem::current_path() / "tbuild.old"), renameErrorCode);
+        std::filesystem::rename(std::filesystem::path(std::filesystem::current_path() / EXENAME), 
+            std::filesystem::path(std::filesystem::current_path() / EXENAME), renameErrorCode);
         if (renameErrorCode) {
-            std::cout << "error\n";
+            std::cout << "Error renaming executable\nExiting...\n";
+            return 1;
         }
 
 
@@ -134,7 +144,7 @@ int main (int argc, char* argv[]) {
                 tbuildSource += std::string(file.path().generic_string()); tbuildSource += " ";
             }
         }
-        std::string rebuildCommand = std::format("g++ {} -o tbuild --std=c++20", tbuildSource);
+        std::string rebuildCommand = std::format("g++ {} -o {} --std=c++20", tbuildSource, EXENAME);
         std::cout << "Rebuilding tbuild with \"" << rebuildCommand << "\"\n";
         system(rebuildCommand.c_str());
         return 0;
