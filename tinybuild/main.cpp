@@ -12,6 +12,27 @@
 #include <filesystem>
 #include <format>
 
+#ifdef _WIN32
+#include <windows.h>
+std::string getexepath()
+{
+  char result[ MAX_PATH ];
+  return std::string( result, GetModuleFileName( NULL, result, MAX_PATH ) );
+}
+#else
+#include <limits.h>
+#include <unistd.h>
+
+std::string getexepath()
+{
+  char result[ PATH_MAX ];
+  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+  return std::string( result, (count > 0) ? count : 0 );
+}
+#endif
+
+
+
 
 #define helpText \
 "\
@@ -79,13 +100,22 @@ int main (int argc, char* argv[]) {
     
     Args args;
     int parseArgsReturnCode = parseArgs(argc, argv, args);
+    std::string exepath = getexepath();
 
-    if (std::filesystem::exists(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"))) {
-        std::filesystem::remove(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"));
+    if (exepath.substr(exepath.find_last_of("/") + 1) != std::string("tbuild.old")) {
+        if (std::filesystem::exists(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"))) {
+            std::filesystem::remove(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"));
+        }
     }
+
 
     if (parseArgsReturnCode != 0) {
         return parseArgsReturnCode;
+    }
+
+
+    if (exepath.substr(exepath.find_last_of("/") + 1) == std::string("tbuild.old")) {
+        std::filesystem::rename(std::filesystem::path(std::filesystem::current_path() / "tbuild.old"), std::filesystem::path(std::filesystem::current_path() / "tbuild"));
     }
 
     if (args.rebuild) {
@@ -159,27 +189,27 @@ int main (int argc, char* argv[]) {
         std::cout << "Build directory created.\n";
     }
 
-    for (BuildConfig config : configs) {
+    if (args.compile) {
+        for (BuildConfig config : configs) {
 
-        // run specified initFunction for Current Config
-        if (config.initFunction != nullptr) {
-            std::cout << "Running config initialization function.\n";
-            config.initFunction();
-            std::cout << "Ran config initialization function.\n";
-        }
-
-        if (config.name == args.config) {
-            if (config.MAKEBUILDDIR) {
-                if (!std::filesystem::exists(build / config.name)) {
-                    std::cout << "Configuration specified build directory not found, creating " << build / config.name << "...\n";
-                    std::filesystem::create_directory(build / config.name);
-                    std::cout << "Created " << build / config.name << ".\n";
-                }
-            } else {
-                std::cout << "MAKEBUILDDIR is set to false, placing build files in BUILDDIR directly.\n";
+            // run specified initFunction for Current Config
+            if (config.initFunction != nullptr) {
+                std::cout << "Running config initialization function.\n";
+                config.initFunction();
+                std::cout << "Ran config initialization function.\n";
             }
 
-            if (args.compile) {
+            if (config.name == args.config) {
+                if (config.MAKEBUILDDIR) {
+                    if (!std::filesystem::exists(build / config.name)) {
+                        std::cout << "Configuration specified build directory not found, creating " << build / config.name << "...\n";
+                        std::filesystem::create_directory(build / config.name);
+                        std::cout << "Created " << build / config.name << ".\n";
+                    }
+                } else {
+                    std::cout << "MAKEBUILDDIR is set to false, placing build files in BUILDDIR directly.\n";
+                }
+
                 for (Binarys binary : config.binarys) {
                     std::string srcFiles;
                     for (auto dir : binary.srcdirs) {
