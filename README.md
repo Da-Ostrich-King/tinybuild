@@ -32,11 +32,26 @@ To build tinybuild with its current configuration, run
 ```
     g++ tinybuild/main.cpp -o tbuild --std=c++20
 ```
+<i>If you are doing advanced configurations with init functions add any other configuration cpp files you have</i>
 And then to build your project run
-```./tbuild -c```. If you want to add defines on the command line (ie defining wayland vs x11 etc.) add the ```-d | --define "<definition>"``` argument to ```./tbuild```. This is passed directly to CC on command line.<br>
+```./tbuild -c```. If you want to add defines on the command line add the ```-d | --define "<definition>"``` argument to ```./tbuild```. This is passed directly to CC on command line.<br>
+<i>Currently I was stupid and ```-d | --define``` does absolutely nothing</i>
 
 If you want to select a configuration other than "default", add ```--config``` to ```./tbuild```. If you are running ```--clean``` then this is the configuration that is cleen built. If you run ```--nuke``` then this is going to delete the build files for <i>all</i> configurations, specifically by deleting the build directory.
 
 
 # Other
-The TBConfig in the root of the repository is the configuration for building tbuild with itself, the default config is in the ```tinybuild/``` directory as ```tinybuild/tinybuildConfig.hpp```
+The TBConfig in the root of the repository is the configuration for building tbuild with itself, the default config is in the ```tinybuild/``` directory as ```tinybuild/tinybuildConfig.hpp``` <br>
+You can also add per-config initFunctions, as a function pointer, function prototype is placed in the tbuild config like this.<br>
+```
+    void myFunFunction ();
+```
+<i>     It is required to be a void function with no parameters. </i> <br>
+Then make a tinybuildConfig.cpp that says something like this
+```
+    #include <iostream>
+    void myFunFunction () {
+        std::cout << "fun init function\n";
+    }
+```
+And then you can write normal c++.

@@ -1,4 +1,4 @@
-// All paths are relative tinybuildConfig.hpp
+// All paths are relative "tbuild" executable, ideally placed at project root
 #pragma once
 // DEFAULT CONFIGURATION
 // MOVE THE TINYBUILD DIRECTORY TO THE ROOT OF THE PROJECT AND THIS FROM THE TINYBUILD DIRECTORY TO THE ROOT OF THE PROJECT
@@ -23,7 +23,8 @@ const BuildConfig configs[] = {
                 .CCFLAGS=""
             }
         },
-        .MAKEBUILDDIR=true
+        .MAKEBUILDDIR=true,
+        .initFunction=nullptr
     } // add more configurations here    
 };
 

@@ -2,10 +2,12 @@
 #pragma once
 
 
-#include "./tinybuild/defines.hpp"
+#include "defines.hpp"
+
 
 #define BUILDDIR "./"
 #define EXTENSION "cpp"
+
 
 // build config
 const BuildConfig configs[] = {
@@ -19,8 +21,10 @@ const BuildConfig configs[] = {
                 .CCFLAGS="-std=c++20"
             }
         },
-        .MAKEBUILDDIR=false
+        .MAKEBUILDDIR=false,
+        .initFunction=nullptr
     } // add more configurations here    
 };
+
 
 // View defines.hpp for more information (if there isnt the information, too bad)

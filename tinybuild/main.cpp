@@ -2,7 +2,7 @@
 
 
 
-#include "../tinybuildConfig.hpp"
+#include "tinybuildConfig.hpp"
 #include "defines.hpp"
 
 #include <iostream>
@@ -130,6 +130,14 @@ int main (int argc, char* argv[]) {
     }
 
     for (BuildConfig config : configs) {
+
+        // run specified initFunction for Current Config
+        if (config.initFunction != nullptr) {
+            std::cout << "Running config initialization function.\n";
+            config.initFunction();
+            std::cout << "Ran config initialization function.\n";
+        }
+
         if (config.name == args.config) {
             if (config.MAKEBUILDDIR) {
                 if (!std::filesystem::exists(build / config.name)) {
