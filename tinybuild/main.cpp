@@ -39,18 +39,21 @@ std::string getexepath()
 NAME\n\
     TinyBuild\n\
 Usage\n\
-    ./tinybuild -c|--compile [-dC|-h]\n\
+    ./tbuild -c|--compile [-dC|-h]\n\
     \n\
 Options\n\
     -h --help     Display this help message\n\
-    -c --compile  Run build with default options (as specified in tinybuildConfig.hpp)\n\
-    -d --define   Add a definition to build\n\
+    -c --compile  Run build with configuration labled \"default\" (as specified in tinybuildConfig.hpp)\n\
+    -d --define   Add a definition to build __NOT_IMPLEMENTED__\n\
     -C --config   Pick the configuration to build with\n\
     --clean       Delete all build files of specified configuration (rm -rf BUILDDIR/default)\n\
     --nuke        Delete all build files in the build folder (rm -rf BUILDDIR/*)\n\
+    --rebuild     Rebuild tinybuild with new configuration\n\
     \n\
 Examples\n\
-    tinybuild -c -d 'BUILDTYPE \"RELEASE\"'\n\
+    ./tbuild -c\n\
+    ./tbuild --rebuild\n\
+    ./tbuild \n\
 \n"
 
 struct Args {
