@@ -19,9 +19,10 @@ Example directory structure.
 │   └── main.cpp
 ├── tbuild
 ├── tinybuild
-│   ├── defines.hpp
-│   └── main.cpp
-└── tinybuildConfig.hpp
+    ├── defines.hpp
+    ├── tinybuildConfig.hpp
+    └── main.cpp
+
 ```
 
 TinyBuild creates a directory in the build directory for each build configuration specified in TBConfig.
@@ -32,7 +33,7 @@ To build tinybuild with its current configuration, run
 ```
     g++ tinybuild/main.cpp -o tbuild --std=c++20
 ```
-<i>You only have to do this the first time you build tbuild, each subsequent time you can run ```./tbuild --rebuild```, tbuild will rename the previous binary to "tbuild.old", it will delete this file whenever tbuild is run again</i>
+<i>You only have to do this the first time you build tbuild, each subsequent time you can run ```./tbuild --rebuild```, tbuild will rename the previous binary to "tbuild.old", it will delete this file whenever tbuild is run again. <b>Because Windows is stupid, this doesn't work, you have to rename tbuild to tbuild.old then run ```./tbuild.old --rebuild```, tbuild.old will automatically be removed when the new ```./tbuild``` binary is run.</b></i>
 And then to build your project run
 ```./tbuild -c```. If you want to add defines on the command line add the ```-d | --define "<definition>"``` argument to ```./tbuild```. This is passed directly to CC on command line.<br>
 <i>Currently I was stupid and ```-d | --define``` does absolutely nothing</i>
