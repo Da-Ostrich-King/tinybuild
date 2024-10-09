@@ -7,35 +7,34 @@
 
 #include <iostream>
 #include <string>
-#include <system_error>
-#include <vector>
 #include <filesystem>
 #include <format>
 
 #ifdef _WIN32
-#define EXENAME "tbuild.exe"
-#define OLDEXENAME "tbuild.old.exe"
+    #define EXENAME "tbuild.exe"
+    #define OLDEXENAME "tbuild.old.exe"
 #else
-#define EXENAME "tbuild"
-#define OLDEXENAME "tbuild.old"
+    #define EXENAME "tbuild"
+    #define OLDEXENAME "tbuild.old"
 #endif
 
 #ifdef _WIN32
-#define WINDOWS_LEAN_AND_MEAN
-#include <windows.h>
-std::string getExecutablePath() {
-    char result[ MAX_PATH ];
-    return std::string( result, GetModuleFileName( NULL, result, MAX_PATH ) );
-}
+    // Stolen from stackoverflow
+    #define WINDOWS_LEAN_AND_MEAN
+    #include <windows.h>
+    std::string getExecutablePath() {
+          char result[ MAX_PATH ];
+              return std::string( result, GetModuleFileName( NULL, result, MAX_PATH ) );
+        }
 #else
-#include <limits.h>
-#include <unistd.h>
-
-std::string getExecutablePath() {
-  char result[ PATH_MAX ];
-  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
-  return std::string( result, (count > 0) ? count : 0 );
-}
+    #include <limits.h>
+    #include <unistd.h>
+    // Stolen from stackoverflow, the second
+    std::string getExecutablePath() {
+      char result[ PATH_MAX ];
+      ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+      return std::string( result, (count > 0) ? count : 0 );
+    }
 #endif
 
 
@@ -236,7 +235,7 @@ int main (int argc, char* argv[]) {
                     for (auto explicitFile : binary.explicitSrcFiles) {
                         srcFiles += std::string (explicitFile); srcFiles += " ";
                     }
-
+                    // Decide compile command depending on if MAKEBUILDDIR is specified for this configuration
                     std::string command = (config.MAKEBUILDDIR) ? 
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/config.name/binary.bin).generic_string())) :
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/binary.bin).generic_string()));
