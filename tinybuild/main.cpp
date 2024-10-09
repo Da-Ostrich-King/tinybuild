@@ -240,7 +240,7 @@ int main (int argc, char* argv[]) {
                     std::string command = (config.MAKEBUILDDIR) ? 
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/config.name/binary.bin).generic_string())) :
                         std::format("{} {} {} {}", config.CC, srcFiles, binary.CCFLAGS, std::string("-o ") + std::string((build/binary.bin).generic_string()));
-                    std::cout << "\nBuilding with configuration " << config.name << ":\n";
+                    std::cout << "\nBuilding with configuration " << config.name << "\n";
                     std::cout << "Command: " << command << "\n";
                     system(command.c_str());
                 }
