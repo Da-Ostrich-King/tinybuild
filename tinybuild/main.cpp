@@ -96,7 +96,7 @@ int parseArgs(int argc, char* argv[], Args& args) {
         } else if (std::string(argv[i]) == "--rebuild") {
             args.rebuild = true;
         } else { // if a command is unkown, recommend reading help text
-            std::cout << "Unkown command \"" << argv[i] << "\"\n";
+            std::cout << "Unkown argument \"" << argv[i] << "\"\n";
             std::cout << "Use -h | --help for help text";
             return 1;
         }
@@ -202,12 +202,6 @@ int main (int argc, char* argv[]) {
     if (args.compile) {
         for (BuildConfig config : configs) {
 
-            // run specified initFunction for Current Config
-            if (config.initFunction != nullptr) {
-                std::cout << "Running config initialization function.\n";
-                config.initFunction();
-                std::cout << "Ran config initialization function.\n";
-            }
 
             if (config.name == args.config) {
                 if (config.MAKEBUILDDIR) {
@@ -218,6 +212,13 @@ int main (int argc, char* argv[]) {
                     }
                 } else {
                     std::cout << "MAKEBUILDDIR is set to false, placing build files in BUILDDIR directly.\n";
+                }
+
+                // run specified initFunction for Current Config
+                if (config.initFunction != nullptr) {
+                    std::cout << "Running config initialization function.\n";
+                    config.initFunction();
+                    std::cout << "Ran config initialization function.\n";
                 }
 
                 for (Binarys binary : config.binarys) {
