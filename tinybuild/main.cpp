@@ -138,7 +138,7 @@ int main (int argc, char* argv[]) {
 
 
         std::string tbuildSource;
-        for (const auto& file : std::filesystem::directory_iterator(std::filesystem::path("tinybuild"))) { // get every file in src dir
+        for (const auto& file : std::filesystem::directory_iterator(std::filesystem::path(TINYBUILD_SOURCE_PATH))) { // get every file in src dir
             if (file.path().generic_string().substr(file.path().generic_string().find_last_of(".") + 1) == std::string("cpp")) {
                 tbuildSource += std::string(file.path().generic_string()); tbuildSource += " ";
             }

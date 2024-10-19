@@ -26,7 +26,7 @@ void buildLib () {
         }    
     }
 
-    std::system ("g++ -Iinclude -c -fPIC");
+    std::system ("g++ -Iinclude -c -fPIC -shared -o build/lib/libgameengine.so");
 }
 
 // build config
@@ -40,7 +40,7 @@ const BuildConfig configs[] = {
 };
 
 
-const char* TINYBUILD_SOURCE_PATH = "./tinybuild";
-const char* REBUILD_COMMAND = "g++ {} -o {} --std=c++20"; 
+#define TINYBUILD_SOURCE_PATH "./tinybuild/tinybuild"
+#define REBUILD_COMMAND "g++ {} -o {} --std=c++20"
 
 // View defines.hpp for more information (if there isnt the information, too bad)
