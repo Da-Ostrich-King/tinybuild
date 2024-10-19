@@ -1,8 +1,8 @@
 // IF I WAS STUPID AND FORGOT TO PUT A LICENSE, REFER TO https://www.gnu.org/licenses/gpl-3.0.en.html#license-text FOR LICENSE INFORMATION
 
+#define configPath "tinybuildConfig.hpp"
 
-
-#include "tinybuildConfig.hpp"
+#include configPath
 #include "defines.hpp"
 
 #include <iostream>
