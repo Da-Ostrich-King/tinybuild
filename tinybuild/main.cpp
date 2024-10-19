@@ -143,7 +143,7 @@ int main (int argc, char* argv[]) {
                 tbuildSource += std::string(file.path().generic_string()); tbuildSource += " ";
             }
         }
-        std::string rebuildCommand = std::format("g++ {} -o {} --std=c++20", tbuildSource, EXENAME);
+        std::string rebuildCommand = std::format(REBUILD_COMMAND, tbuildSource, EXENAME);
         std::cout << "Rebuilding tbuild with \"" << rebuildCommand << "\"\n";
         system(rebuildCommand.c_str());
         return 0;
