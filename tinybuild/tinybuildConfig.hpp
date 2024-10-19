@@ -8,39 +8,31 @@
 // IF I WAS STUPID AND FORGOT TO PUT A LICENSE, REFER TO https://www.gnu.org/licenses/gpl-3.0.en.html#license-text FOR LICENSE INFORMATION
 #include "defines.hpp"
 #include <cstdlib>
-#include <string>
-#include <filesystem>
 
 #define BUILDDIR "./build"
 #define EXTENSION "cpp"
 
-void buildLib () {
-    // override build command completely
-    std::string srcFiles;
-    for (auto dir : std::filesystem::path("./src")) {
-        std::filesystem::path srcdir = dir;
-        for (const auto& file : std::filesystem::directory_iterator(srcdir)) { // get every file in src dir
-            if (file.path().generic_string().substr(file.path().generic_string().find_last_of(".") + 1) == std::string(EXTENSION)) {
-                srcFiles += std::string(file.path().generic_string()); srcFiles += " ";
-            }
-        }    
-    }
-
-    std::system ("g++ -Iinclude -c -fPIC -shared -o build/lib/libgameengine.so");
-}
+#define TINYBUILD_SOURCE_PATH "./tinybuild/tinybuild"
+#define REBUILD_COMMAND "g++ {} -o {} --std=c++20"
 
 // build config
 const BuildConfig configs[] = {
     {
-        .name="lib",
+        .name="default",
         .CC="g++",
+        .binarys={
+            {
+                .bin="default",
+                .srcdirs={"src"},
+                .CCFLAGS="",
+                .explicitSrcFiles={""}
+            }
+        },
         .MAKEBUILDDIR=true,
-        .initFunction=buildLib
+        .initFunction=nullptr
     } // add more configurations here    
 };
 
 
-#define TINYBUILD_SOURCE_PATH "./tinybuild/tinybuild"
-#define REBUILD_COMMAND "g++ {} -o {} --std=c++20"
 
 // View defines.hpp for more information (if there isnt the information, too bad)
